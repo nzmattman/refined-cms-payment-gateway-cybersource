@@ -4,8 +4,7 @@
   "require": {
     "php": "^7.1.3",
     "refineddigital/cms": "~1.0|dev-master",
-    "league/omnipay": "^3",
-    "dioscouri/omnipay-cybersource": "~3.0"
+    "cybersource/sdk-php": "*"
   },
   "license": "MIT",
   "authors": [

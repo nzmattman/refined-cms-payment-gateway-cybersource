@@ -5,7 +5,6 @@ namespace RefinedDigital\PaymentGateways\Cybersource\Module\Classes;
 use RefinedDigital\CMS\Modules\Core\Classes\PaymentGateway;
 use RefinedDigital\CMS\Modules\Core\Contracts\PaymentGatewayInterface;
 
-use Omnipay\Omnipay;
 use RefinedDigital\FormBuilder\Module\Http\Repositories\FormBuilderRepository;
 use RefinedDigital\FormBuilder\Module\Http\Repositories\FormsRepository;
 
@@ -15,71 +14,98 @@ class Cybersource extends PaymentGateway implements PaymentGatewayInterface {
 
     public function process($request, $form, $emailData)
     {
-        $gateway = Omnipay::create('Cybersource');
-        // $gateway->setProfileId();
-        // $gateway->setAccessKey();
-        // $gateway->setSecretKey();
+        // todo: update to use Omnipay Cybersource
+
+        $transaction = $this->logTransaction($form, $emailData, null);
+
+        // cybresource code
+        $properties = parse_ini_file('cybs.ini');
+        $properties['merchant_id'] = env('CYBERSOURCE_MERCHANT');
+        $properties['transaction_key'] = env('CYBERSOURCE_KEY');
+		$client = new \CybsClient([], $properties);
+		$cyber = $this->createRequest($transaction->id, $properties['merchant_id']);
+
+		// Build a sale request (combining an auth and capture). In this example only
+		// the amount is provided for the purchase total.
+		$ccAuthService = new \stdClass();
+		$ccAuthService->run = 'true';
+		$cyber->ccAuthService = $ccAuthService;
+
+		$ccCaptureService = new \stdClass();
+		$ccCaptureService->run = 'true';
+		$cyber->ccCaptureService = $ccCaptureService;
+
+
         $formBuilderRepository = new FormBuilderRepository();
         $formRepo = new FormsRepository($formBuilderRepository);
         $fields = $formRepo->formatFieldsByName($request, $form);
 
-        $card = $gateway->createCard([
-            'card' => [
-                'firstName' => $fields->{'First Name'},
-                'lastName' => $fields->{'Last Name'},
-                'billingAddress1' => $fields->Address,
-                'billingCity' => $fields->{'Address 2'},
-                'billingState' => $fields->State,
-                'billingPostcode' => $fields->Postcode,
-                'number' => '4111111111111111',
-                'expiryMonth' => '12',
-                'expiryYear' => '2025',
-                'cvv' => '123',
-            ]
-        ]);
+		$billTo = new \stdClass();
+		$billTo->firstName = $fields->{'First Name'};
+		$billTo->lastName = $fields->{'Last Name'};
+		$billTo->street1 = $fields->Address;
+		$billTo->city = $fields->{'Address 2'};
+		$billTo->state = $fields->State;
+		$billTo->postalCode = $fields->Postcode;
+		$billTo->country = config('products.orders.country_code');
+		$billTo->email = $fields->Email;
+		$billTo->ipAddress = help()->getClientIp();
+		$cyber->billTo = $billTo;
 
-        help()->trace($card);
-        exit();
+		$card = new \stdClass();
+		$card->accountNumber = $request->input('c.num');
+		$card->expirationMonth = $request->input('c.expiry_month');
+		$card->expirationYear = $request->input('c.expiry_year');
+		$cyber->card = $card;
 
-        $args = [
-            'amount' => $this->total,
-            'currency' => $this->currency,
-            'description' => $this->description,
-            'email' => $fields->Email,
-        ];
+		$purchaseTotals = new \stdClass();
+		$purchaseTotals->currency = config('products.orders.currency');
+		$purchaseTotals->grandTotalAmount = $emailData->cart->totals->total;
+		$cyber->purchaseTotals = $purchaseTotals;
 
+        $success = false;
+        $message = '';
 
+		try {
+            $response = $client->runTransaction($cyber);
+		    if (isset($response->decision) && $response->decision === 'ACCEPT') {
+		        $success = true;
+		        $message = 'Payment Successful';
 
-        $response = $gateway->purchase($args)->send();
-        help()->trace($fields);
-        help()->trace($gateway->getDefaultParameters());
-        help()->trace($args);
-        help()->trace($response);
-        /*$gateway = Omnipay::create('Stripe');
-        $gateway->setApiKey(env('STRIPE_SECRET'));
+		        $transaction->response = $response;
+		        $transaction->transaction_id = $response->receiptNumber;
+		        $transaction->save();
 
-        $args = [
-            'amount' => $this->total,
-            'currency' => $this->currency,
-            'token' => $request->get('stripeToken'),
-            'description' => $this->description,
-        ];
+		    }
+		} catch(\Exception $error) {
 
-        if (sizeof($this->metaData)) {
-            $args['metadata'] = $this->metaData;
-        }
+            $transaction->response = $error;
+            $transaction->save();
 
-        $response = $gateway
-            ->purchase($args)
-            ->send();
-
-        $transaction = $this->logTransaction($form, $emailData, $response);
+            $message = $error->getMessage();
+		}
 
         $return = new \stdClass();
-        $return->success = $response->isSuccessful();
+        $return->success = $success;
         $return->transaction = $transaction;
-        $return->message = $response->getMessage();
+        $return->message = $message;
 
-        return $return;*/
+        return $return;
+
+
+    }
+
+    /*
+     * Taken from CybsSoapClient from Cybersource SKD
+     */
+    private function createRequest($merchantReferenceCode, $merchantId)
+    {
+        $request = new \stdClass();
+        $request->merchantID = $merchantId;
+        $request->merchantReferenceCode = $merchantReferenceCode;
+        $request->clientLibrary = \CybsClient::CLIENT_LIBRARY_VERSION;
+        $request->clientLibraryVersion = phpversion();
+        $request->clientEnvironment = php_uname();
+        return $request;
     }
 }
