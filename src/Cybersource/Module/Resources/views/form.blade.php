@@ -1,11 +1,11 @@
-<div class="form__row">
+<div class="form__row form__row--required">
   <label class="form__label" for="form__field--name-on-card">Name on Card</label>
-  <input type="text" class="form__control" id="form__field--name-on-card" name="c[name]"/>
+  <input type="text" class="form__control" id="form__field--name-on-card" name="c[name]" required data-required-label="Name on Card"/>
 </div>
 
-<div class="form__row">
+<div class="form__row form__row--required">
   <label class="form__label" for="form__field--number">Card Number</label>
-  <input type="text" class="form__control" id="form__field--number" name="c[num]" maxlength="16"/>
+  <input type="text" class="form__control" id="form__field--number" name="c[num]" maxlength="16" required data-required-label="Card Number"/>
 </div>
 
 @php
@@ -22,11 +22,11 @@
   }
 @endphp
 
-<div class="form__row">
+<div class="form__row form__row--required">
   {!!
     html()->label('Expiry', 'form__field--expiry')->attribute('class', 'form__label')
   !!}
-  <div class="form__row form__row--cc-expiry">
+  <div class="form__row form__row--required form__row--cc-expiry">
     {!!
       html()
         ->select('c[expiry_month]', $months, date('m'))
@@ -40,9 +40,9 @@
   </div>
 </div>
 
-<div class="form__row">
+<div class="form__row form__row--required">
   <label class="form__label" for="form__field--ccv">CCV</label>
-  <input type="text" class="form__control" id="form__field--ccv" name="c[ccv]" maxlength="16"/>
+  <input type="text" class="form__control" id="form__field--ccv" name="c[ccv]" maxlength="16" required data-required-label="CCV"/>
 </div>
 
 <div class="payment-gateway__icons">
