@@ -45,14 +45,14 @@ class Cybersource extends PaymentGateway implements PaymentGatewayInterface {
             $fields = $formRepo->formatFieldsByName($request, $form);
 
             $billTo = new \stdClass();
-            $billTo->firstName = $fields->{'First Name'};
-            $billTo->lastName = $fields->{'Last Name'};
-            $billTo->street1 = $fields->Address;
-            $billTo->city = $fields->{'Address 2'};
-            $billTo->state = $fields->State;
-            $billTo->postalCode = $fields->Postcode;
+            $billTo->firstName = $fields['First Name'];
+            $billTo->lastName = $fields['Last Name'];
+            $billTo->street1 = $fields['Address'];
+            $billTo->city = $fields['Address 2'];
+            $billTo->state = $fields['State'];
+            $billTo->postalCode = $fields['Postcode'];
             $billTo->country = config('products.orders.country_code');
-            $billTo->email = $fields->Email;
+            $billTo->email = $fields['Email'];
             $billTo->ipAddress = help()->getClientIp();
             $cyber->billTo = $billTo;
 
