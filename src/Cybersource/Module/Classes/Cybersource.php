@@ -26,6 +26,8 @@ class Cybersource extends PaymentGateway implements PaymentGatewayInterface {
             $properties = parse_ini_file('cybs.ini');
             $properties['merchant_id'] = env('CYBERSOURCE_MERCHANT');
             $properties['transaction_key'] = env('CYBERSOURCE_KEY');
+            $properties['wsdl'] = env('CYBERSOURCE_WSDL');
+            $properties['nvp_wsdl'] = env('CYBERSOURCE_NVP_WSDL');
             $client = new \CybsClient([], $properties);
             $cyber = $this->createRequest($transaction->id, $properties['merchant_id']);
 
