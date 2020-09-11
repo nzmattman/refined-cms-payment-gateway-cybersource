@@ -3,7 +3,7 @@
 namespace RefinedDigital\PaymentGateways\Cybersource\Module\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use RefinedDigital\CMS\Modules\Core\Models\PaymentGatewayAggregate;
+use RefinedDigital\CMS\Modules\Core\Aggregates\PaymentGatewayAggregate;
 
 class PaymentGatewayCybersourceServiceProvider extends ServiceProvider
 {

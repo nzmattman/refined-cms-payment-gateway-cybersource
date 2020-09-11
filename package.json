@@ -1,0 +1,22 @@
+{
+  "name": "@refineddigital/payment-gateway-cybersource",
+  "version": "1.0.2",
+  "scripts": {
+    "publish-and-tag": "git push --tags && git push origin master",
+    "version:patch": "npm version patch && npm run publish-and-tag",
+    "version:minor": "npm version minor && npm run publish-and-tag",
+    "version:marjor": "npm version major && npm run publish-and-tag"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/refineddigital/cms-payment-gateway-cybersource.git"
+  },
+  "author": "Matthias Law",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/refineddigital/cms-payment-gateway-cybersource/issues"
+  },
+  "homepage": "https://gitlab.com/refineddigital/cms-payment-gateway-cybersource#README",
+  "devDependencies": {},
+  "dependencies": {}
+}
