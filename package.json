@@ -1,5 +1,5 @@
 {
-  "name": "@refineddigital/payment-gateway-cybersource",
+  "name": "@refineddigital/cms-payment-gateway-cybersource",
   "version": "1.0.3",
   "scripts": {
     "publish-and-tag": "git push --tags && git push origin master",
