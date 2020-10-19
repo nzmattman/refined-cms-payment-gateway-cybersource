@@ -1,6 +1,6 @@
 <?php
 
-namespace RefinedDigital\PaymentGateways\Cybersource\Module\Providers;
+namespace RefinedDigital\Cybersource\Module\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use RefinedDigital\CMS\Modules\Core\Aggregates\PaymentGatewayAggregate;
@@ -32,6 +32,6 @@ class PaymentGatewayCybersourceServiceProvider extends ServiceProvider
     public function register()
     {
         app(PaymentGatewayAggregate::class)
-            ->addGateway('Cybersource', \RefinedDigital\PaymentGateways\Cybersource\Module\Classes\Cybersource::class);
+            ->addGateway('Cybersource', \RefinedDigital\Cybersource\Module\Classes\Cybersource::class);
     }
 }
