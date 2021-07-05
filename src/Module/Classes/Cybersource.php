@@ -1,6 +1,6 @@
 <?php
 
-namespace RefinedDigital\Cybersource\Module\Classes;
+namespace RefinedDigital\PaymentGatewayCybersource\Module\Classes;
 
 use RefinedDigital\CMS\Modules\Core\Classes\PaymentGateway;
 use RefinedDigital\CMS\Modules\Core\Contracts\PaymentGatewayInterface;

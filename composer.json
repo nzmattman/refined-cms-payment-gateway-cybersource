@@ -15,13 +15,13 @@
   ],
   "autoload": {
     "psr-4": {
-      "RefinedDigital\\Cybersource\\": "src/"
+      "RefinedDigital\\PaymentGatewayCybersource\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "RefinedDigital\\Cybersource\\Module\\Providers\\PaymentGatewayCybersourceServiceProvider"
+        "RefinedDigital\\PaymentGatewayCybersource\\Module\\Providers\\PaymentGatewayCybersourceServiceProvider"
       ],
       "aliases": {
       }
