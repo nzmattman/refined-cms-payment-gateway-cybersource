@@ -3,7 +3,7 @@
   "description": "Payment Gateway for Cybersource",
   "require": {
     "php": "^7.1.3",
-    "refineddigital/cms": "~1.0|dev-master",
+    "refineddigital/cms": "^1.7|dev-master",
     "cybersource/sdk-php": "*"
   },
   "license": "MIT",
